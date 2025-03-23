@@ -71,6 +71,7 @@ The entire project is written in a **single JavaScript file** using only **HTML,
 > Everything runs inside a **single JavaScript file**:
 ```bash
 product-carousel.js   # Contains all HTML, CSS, and JS
+```
 
 ![image](https://github.com/user-attachments/assets/a89e141c-4299-48e8-bafb-b1c482465389)
 
