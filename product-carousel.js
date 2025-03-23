@@ -18,7 +18,18 @@
                     </div>
                 </div>
             `;
-            $('body').prepend(html);
+            const tryInsertCarousel = () => {
+                const section = document.querySelector('.Section1');
+                if (section) {
+                    section.insertAdjacentHTML('afterend', html);
+                    console.log('✅ Carousel .Section1 altına başarıyla eklendi!');
+                } else {
+                    console.log('❌ .Section1 bulunamadı, tekrar denenecek...');
+                    setTimeout(tryInsertCarousel, 200); 
+                }
+            };
+
+            tryInsertCarousel();
         },
 
         buildCSS: () => {
@@ -197,24 +208,69 @@
                 }
 
                 #ebebek-carousel .heart-icon {
-                    position: absolute;
-                    width: 26px;
-                    height: 26px;
+                    width: 100%;
+                    height: 100%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     transition: opacity 0.3s ease;
+                    justify-content: center;
+                    transition: opacity 0.3s ease;
+                    padding: 0;
+                    position: relative;
                 }
 
-                #ebebek-carousel .hovered {
-                    opacity: 0;
-                }
-
-                #ebebek-carousel .heart.is-favorite .default-icon {
-                    opacity: 0;
-                }
-                #ebebek-carousel .heart.is-favorite .hovered {
+                #ebebek-carousel .heart .default-icon {
+                    position: absolute;
+                    display: block;
                     opacity: 1;
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart .hover-icon {
+                    position: absolute;
+                    display: block;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart:hover .default-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart:hover .hover-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart.is-favorite .default-icon,
+                #ebebek-carousel .heart.is-favorite .hover-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart.is-favorite .favorite-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart .favorite-icon {
+                    position: absolute;
+                    display: block;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart.is-favorite:hover .favorite-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart.is-favorite:hover .favorite-hover-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart .favorite-hover-icon {
+                    position: absolute;
+                    display: block;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
                 }
 
                 #ebebek-carousel .product-item__brand {
@@ -274,14 +330,14 @@
                 }
 
                 #ebebek-carousel .product-item__old-price {
-                    font-size: 1.2rem;
+                    font-size: 1.4rem;
                     color: #7d7d7d;
                     text-decoration: line-through;
                     text-align: left;
                 }
 
                 #ebebek-carousel .product-item__percent {
-                    font-size: 1.1rem;
+                    font-size: 1.4rem;
                     font-weight: 600;
                     color: #53B175;
                     line-height: 1.2;
@@ -338,8 +394,27 @@
                         overflow-x: auto;
                     }
                     #ebebek-carousel .carousel-product-item {
-                        flex: 0 0 calc(50% - 8px);
-                        height: 350px;
+                        flex: 0 0 calc((100% - 4 * 16px) / 5);
+                }
+
+                /* 3 Ürün - Tablet Yatay */
+                @media (min-width: 992px) and (max-width: 1199px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc((100% - 2 * 16px) / 3); /* 3 ürün, 2 boşluk */
+                    }
+                }
+
+                /* 2 Ürün - Tablet Dikey */
+                @media (min-width: 768px) and (max-width: 991px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc((100% - 1 * 16px) / 2); /* 2 ürün, 1 boşluk */
+                    }
+                }
+
+                /* 2 Ürün - Mobil (scrollable) */
+                @media (max-width: 767px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc(50% - 8px); /* mobilde scroll olur */
                     }
                 }
             `;
@@ -351,36 +426,51 @@
 
         fetchAndRenderProducts: () => {
             const apiURL = 'https://gist.githubusercontent.com/sevindi/8bcbde9f02c1d4abe112809c974e1f49/raw/9bf93b58df623a9b16f1db721cd0a7a539296cf0/products.json';
-        
+
             $.get(apiURL, (data) => {
                 let products = typeof data === "string" ? JSON.parse(data) : data;
-                
+
                 products.forEach(product => {
                     const hasDiscount = product.original_price > product.price;
                     let discountPercent = 0;
-                    
+
                     if (hasDiscount) {
                         discountPercent = Math.round(((product.original_price - product.price) / product.original_price) * 100);
                     }
-                    
+
                     const productHTML = `
                         <div class="carousel-product-item" data-id="${product.id}">
                             <div class="heart">
                                 <div class="heart-icon default-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="23" viewBox="0 0 26 23" fill="none">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M22.6339 2.97449C21.4902 1.83033 19.9388 1.1875 18.3211 1.1875C16.7034 1.1875 15.152 1.83033 14.0084 2.97449L12.8332 4.14968L11.658 2.97449C9.27612 0.592628 5.41435 0.592627 3.03249 2.97449C0.650628 5.35635 0.650628 9.21811 3.03249 11.6L4.20769 12.7752L12.8332 21.4007L21.4587 12.7752L22.6339 11.6C23.778 10.4564 24.4208 8.90494 24.4208 7.28723C24.4208 5.66952 23.778 4.11811 22.6339 2.97449Z"
-                                            stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M22.6339 2.97449C21.4902 1.83033 19.9388 1.1875 18.3211 1.1875C16.7034 1.1875 15.152 1.83033 14.0084 2.97449L12.8332 4.14968L11.658 2.97449C9.27612 0.592628 5.41435 0.592627 3.03249 2.97449C0.650628 5.35635 0.650628 9.21811 3.03249 11.6L4.20769 12.7752L12.8332 21.4007L21.4587 12.7752L22.6339 11.6C23.778 10.4564 24.4208 8.90494 24.4208 7.28723C24.4208 5.66952 23.778 4.11811 22.6339 2.97449Z" stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <div class="heart-icon hovered">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 52 52" fill="none">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M36.6339 17.9745C35.4902 16.8303 33.9388 16.1875 32.3211 16.1875C30.7034 16.1875 29.152 16.8303 28.0084 17.9745L26.8332 19.1497L25.658 17.9745C23.2761 15.5926 19.4144 15.5926 17.0325 17.9745C14.6506 20.3564 14.6506 24.2181 17.0325 26.6L18.2077 27.7752L26.8332 36.4007L35.4587 27.7752L36.6339 26.6C37.778 25.4564 38.4208 23.9049 38.4208 22.2872C38.4208 20.6695 37.778 19.1181 36.6339 17.9745Z"
-                                            stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
+                                <div class="heart-icon hover-icon">
+                                    <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M30 30.5H37" stroke="#FF8A00" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M33.5 27L33.5 34" stroke="#FF8A00" stroke-width="2" stroke-linecap="round"/>
+                                        <circle cx="26" cy="26" r="25" stroke="#FF8A00"/>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6339 17.9745C35.4902 16.8303 33.9388 16.1875 32.3211 16.1875C30.7034 16.1875 29.152 16.8303 28.0084 17.9745L26.8332 19.1497L25.658 17.9745C23.2761 15.5926 19.4144 15.5926 17.0325 17.9745C14.6506 20.3564 14.6506 24.2181 17.0325 26.6L18.2077 27.7752L26.8332 36.4007L35.4587 27.7752L36.6339 26.6C37.778 25.4564 38.4208 23.9049 38.4208 22.2872C38.4208 20.6695 37.778 19.1181 36.6339 17.9745Z" stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
                                         <circle cx="33.5" cy="30.5" r="5.5" fill="#FFF7EC"/>
                                         <path d="M30 30.5H37" stroke="#FF8A00" stroke-width="2" stroke-linecap="round"/>
                                         <path d="M33.5 27L33.5 34" stroke="#FF8A00" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <div class="heart-icon favorite-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52" fill="none">
+                                        <circle cx="26" cy="26" r="25" stroke="#FF8A00" stroke-opacity="0.2"/>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6339 17.9745C35.4902 16.8303 33.9388 16.1875 32.3211 16.1875C30.7034 16.1875 29.152 16.8303 28.0084 17.9745L26.8332 19.1497L25.658 17.9745C23.2761 15.5926 19.4144 15.5926 17.0325 17.9745C14.6506 20.3564 14.6506 24.2181 17.0325 26.6L18.2077 27.7752L26.8332 36.4007L35.4587 27.7752L36.6339 26.6C37.778 25.4564 38.4208 23.9049 38.4208 22.2872C38.4208 20.6695 37.778 19.1181 36.6339 17.9745Z" fill="#FF8A00" stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M30.1636 34.8314L31.0475 33.9475L30.1636 34.8314C30.5354 35.2031 31.0422 35.4175 31.5775 35.4175C32.1128 35.4175 32.6196 35.2031 32.9914 34.8314L32.1075 33.9475L32.9914 34.8314L38.6614 29.1614C39.4395 28.3832 39.4395 27.1118 38.6614 26.3336C37.8832 25.5555 36.6118 25.5555 35.8336 26.3336L31.5775 30.5897L30.1614 29.1736C29.3832 28.3955 28.1118 28.3955 27.3336 29.1736C26.5555 29.9518 26.5555 31.2232 27.3336 32.0014L30.1636 34.8314Z" fill="#FFF7EC" stroke="#FFF7EC" stroke-width="2.5"/>
+                                        <path d="M30.8707 34.1243C31.0571 34.3106 31.3104 34.4175 31.5775 34.4175C31.8446 34.4175 32.0979 34.3106 32.2843 34.1243L37.9543 28.4543C38.3419 28.0666 38.3419 27.4284 37.9543 27.0407C37.5666 26.6531 36.9284 26.6531 36.5407 27.0407L31.5775 32.0039L29.4543 29.8807C29.0666 29.4931 28.4284 29.4931 28.0407 29.8807C27.6531 30.2684 27.6531 30.9066 28.0407 31.2943L30.8707 34.1243Z" fill="#FF8A00" stroke="#FF8A00" stroke-width="0.5"/>
+                                    </svg>
+                                </div>
+                                <div class="heart-icon favorite-hover-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52" fill="none">
+                                        <circle cx="26" cy="26" r="25" stroke="#FF8A00"/>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6339 17.9745C35.4902 16.8303 33.9388 16.1875 32.3211 16.1875C30.7034 16.1875 29.152 16.8303 28.0084 17.9745L26.8332 19.1497L25.658 17.9745C23.2761 15.5926 19.4144 15.5926 17.0325 17.9745C14.6506 20.3564 14.6506 24.2181 17.0325 26.6L18.2077 27.7752L26.8332 36.4007L35.4587 27.7752L36.6339 26.6C37.778 25.4564 38.4208 23.9049 38.4208 22.2872C38.4208 20.6695 37.778 19.1181 36.6339 17.9745Z" fill="#FF8A00" stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M36.0519 27.3342C36.1579 27.2283 36.2837 27.1442 36.4221 27.0869C36.5606 27.0295 36.709 27 36.8588 27C37.0087 27 37.1571 27.0295 37.2955 27.0869C37.434 27.1442 37.5598 27.2283 37.6658 27.3342C37.7717 27.4402 37.8558 27.566 37.9131 27.7045C37.9705 27.8429 38 27.9913 38 28.1412C38 28.291 37.9705 28.4394 37.9131 28.5779C37.8558 28.7163 37.7717 28.8421 37.6658 28.9481L32.219 34.3948L30 35L30.6052 32.781L36.0519 27.3342Z" stroke="#FFF7EC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M36.0519 27.3342C36.1579 27.2283 36.2837 27.1442 36.4221 27.0869C36.5606 27.0295 36.709 27 36.8588 27C37.0087 27 37.1571 27.0295 37.2955 27.0869C37.434 27.1442 37.5598 27.2283 37.6658 27.3342C37.7717 27.4402 37.8558 27.566 37.9131 27.7045C37.9705 27.8429 38 27.9913 38 28.1412C38 28.291 37.9705 28.4394 37.9131 28.5779C37.8558 28.7163 37.7717 28.8421 37.6658 28.9481L32.219 34.3948L30 35L30.6052 32.781L36.0519 27.3342Z" fill="#FF8A00"/>
                                     </svg>
                                 </div>
                             </div>
@@ -420,24 +510,24 @@
                         </div>
                     `;
                     $('.carousel-content').append(productHTML);
-
-                    self.updateFavoritesUI();
                 });
+
+                self.updateFavoritesUI();
                 self.updateButtonVisibility();
             }).fail(() => {
                 console.error('Ürünleri yüklerken hata oluştu!');
             });
         },
-        
+
         isTouchDevice: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0,
 
         getScrollStep: () => {
             const $items = $('.carousel-product-item');
             if ($items.length < 2) return $items.first().outerWidth();
-            
+
             const firstItemOffset = $items.eq(0).offset().left;
             const secondItemOffset = $items.eq(1).offset().left;
-            
+
             return secondItemOffset - firstItemOffset;
         },
 
@@ -445,42 +535,24 @@
             const $content = $('.carousel-content');
             const scrollLeft = $content.scrollLeft();
             const maxScroll = $content[0].scrollWidth - $content.outerWidth();
-            
+
             $('.prev-btn').toggle(scrollLeft > 0);
             $('.next-btn').toggle(scrollLeft < maxScroll - 5);
         },
 
         setEvents: () => {
-            if (!self.isTouchDevice()) {
-                $('.carousel-content').on('mouseenter', '.heart', function () {
-                    const $heart = $(this);
-                    if (!$heart.hasClass('is-favorite')) {
-                        $heart.find('.default-icon').css('opacity', 0);
-                        $heart.find('.hovered').css('opacity', 1);
-                    }
-                });
-            
-                $('.carousel-content').on('mouseleave', '.heart', function () {
-                    const $heart = $(this);
-                    if (!$heart.hasClass('is-favorite')) {
-                        $heart.find('.default-icon').css('opacity', 1);
-                        $heart.find('.hovered').css('opacity', 0);
-                    }
-                });
-            }
-
             $('.carousel-content').on('click', '.heart', function (e) {
                 e.stopPropagation();
                 const $product = $(this).closest('.carousel-product-item');
                 const productId = parseInt($product.attr('data-id'), 10);
                 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            
+
                 if (favorites.includes(productId)) {
                     favorites = favorites.filter(id => id !== productId);
                 } else {
                     favorites.push(productId);
                 }
-            
+
                 localStorage.setItem('favorites', JSON.stringify(favorites));
                 self.updateFavoritesUI();
             });
@@ -489,26 +561,26 @@
                 const $content = $('.carousel-content');
                 const scrollStep = self.getScrollStep();
                 const currentScroll = $content.scrollLeft();
-                
+
                 $content.animate({
                     scrollLeft: currentScroll + scrollStep
                 }, 300, () => {
                     self.updateButtonVisibility();
                 });
             });
-            
+
             $('.prev-btn').on('click', () => {
                 const $content = $('.carousel-content');
                 const scrollStep = self.getScrollStep();
                 const currentScroll = $content.scrollLeft();
-                
+
                 $content.animate({
                     scrollLeft: currentScroll - scrollStep
                 }, 300, () => {
                     self.updateButtonVisibility();
                 });
             });
-            
+
             $('.carousel-content').on('scroll', () => {
                 self.updateButtonVisibility();
             });
@@ -516,34 +588,16 @@
 
         updateFavoritesUI: () => {
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        
+
             $('.carousel-product-item').each((_, el) => {
                 const $item = $(el);
                 const productId = parseInt($item.data('id'), 10);
                 const $heart = $item.find('.heart');
-                const $defaultIcon = $heart.find('.default-icon');
-                const $hoveredIcon = $heart.find('.hovered');
-        
+
                 if (favorites.includes(productId)) {
                     $heart.addClass('is-favorite');
-                    $defaultIcon.html(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="23" viewBox="0 0 26 23" fill="#FF8A00">
-                          <path d="M12.8332 21.4007L4.20769 12.7752C1.82583 10.3934 1.82583 6.5316 4.20769 4.14974C6.58955 1.76788 10.4513 1.76788 12.8332 4.14974C15.2151 1.76788 19.0768 1.76788 21.4587 4.14974C23.8405 6.5316 23.8405 10.3934 21.4587 12.7752L12.8332 21.4007Z"/>
-                        </svg>
-                    `);
-                    $defaultIcon.css('opacity', 1);
-                    $hoveredIcon.css('opacity', 0);
                 } else {
                     $heart.removeClass('is-favorite');
-                    $defaultIcon.html(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="23" viewBox="0 0 26 23" fill="none">
-                          <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M22.6339 2.97449C21.4902 1.83033 19.9388 1.1875 18.3211 1.1875C16.7034 1.1875 15.152 1.83033 14.0084 2.97449L12.8332 4.14968L11.658 2.97449C9.27612 0.592628 5.41435 0.592627 3.03249 2.97449C0.650628 5.35635 0.650628 9.21811 3.03249 11.6L4.20769 12.7752L12.8332 21.4007L21.4587 12.7752L22.6339 11.6C23.778 10.4564 24.4208 8.90494 24.4208 7.28723C24.4208 5.66952 23.778 4.11811 22.6339 2.97449Z"
-                            stroke="#FF8A00" stroke-width="2.17391" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    `);
-                    $defaultIcon.css('opacity', 1);
-                    $hoveredIcon.css('opacity', 0);
                 }
             });
         },
