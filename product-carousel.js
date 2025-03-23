@@ -401,6 +401,36 @@
                         flex: 0 0 calc(50% - 8px);
                     }
                 }
+
+
+                #ebebek-carousel .carousel-product-item {
+                    flex: 0 0 calc(20% - 12.8px);
+                }
+
+                @media (min-width: 992px) and (max-width: 1199px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc(25% - 12px);
+                    }
+                }
+
+                @media (min-width: 768px) and (max-width: 991px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc(33.333% - 10.6px);
+                    }
+                }
+
+                @media (max-width: 767px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 calc(50% - 8px);
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    #ebebek-carousel .carousel-product-item {
+                        flex: 0 0 100%;
+                    }
+                }
+
             `;
 
             $('<style>')
