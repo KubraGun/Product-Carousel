@@ -508,13 +508,15 @@
         },
 
         getScrollStep: () => {
-            const $content = $('.carousel-content');
             const $items = $('.carousel-product-item');
             if ($items.length < 2) return $items.first().outerWidth();
 
-            // Bir sonraki ürün birimini görüntülemek için kaydırma miktarını hesapla
-            return $items.first().outerWidth(true);
+            const firstOffset = $items.eq(0).offset().left;
+            const secondOffset = $items.eq(1).offset().left;
+
+            return secondOffset - firstOffset;
         },
+
 
         updateButtonVisibility: () => {
             const $content = $('.carousel-content');
@@ -526,7 +528,6 @@
         },
 
         setEvents: () => {
-            // Favori butonları için olay dinleyicileri
             $(document).on('click', '#ebebek-carousel .heart', function (e) {
                 e.stopPropagation();
                 const $product = $(this).closest('.carousel-product-item');
@@ -543,25 +544,26 @@
                 self.updateFavoritesUI();
             });
 
-            // Sağ ok butonu için olay dinleyicisi
             $('.next-btn').on('click', () => {
                 const $content = $('.carousel-content');
                 const scrollStep = self.getScrollStep();
+                const currentScroll = $content.scrollLeft();
+
                 $content.animate({
-                    scrollLeft: $content.scrollLeft() + scrollStep
+                    scrollLeft: currentScroll + scrollStep
                 }, 300, self.updateButtonVisibility);
             });
 
-            // Sol ok butonu için olay dinleyicisi
             $('.prev-btn').on('click', () => {
                 const $content = $('.carousel-content');
                 const scrollStep = self.getScrollStep();
+                const currentScroll = $content.scrollLeft();
+
                 $content.animate({
-                    scrollLeft: $content.scrollLeft() - scrollStep
+                    scrollLeft: currentScroll - scrollStep
                 }, 300, self.updateButtonVisibility);
             });
 
-            // Kaydırma olayı dinleyicisi
             $('.carousel-content').on('scroll', self.updateButtonVisibility);
         },
 
