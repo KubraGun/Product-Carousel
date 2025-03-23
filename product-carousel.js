@@ -92,6 +92,7 @@
                 #ebebek-carousel .carousel-content {
                     display: flex;
                     overflow-x: hidden;
+                    overflow-y: hidden;
                     gap: 16px;
                     padding: 10px 0;
                     scroll-behavior: smooth;
@@ -403,28 +404,33 @@
                 }
 
 
+                /* Büyük ekran (5 ürün) */
                 #ebebek-carousel .carousel-product-item {
                     flex: 0 0 calc(20% - 12.8px);
                 }
 
+                /* Laptop (4 ürün) */
                 @media (min-width: 992px) and (max-width: 1199px) {
                     #ebebek-carousel .carousel-product-item {
                         flex: 0 0 calc(25% - 12px);
                     }
                 }
 
+                /* Tablet (3 ürün) */
                 @media (min-width: 768px) and (max-width: 991px) {
                     #ebebek-carousel .carousel-product-item {
                         flex: 0 0 calc(33.333% - 10.6px);
                     }
                 }
 
+                /* Mobil (2 ürün) */
                 @media (max-width: 767px) {
                     #ebebek-carousel .carousel-product-item {
                         flex: 0 0 calc(50% - 8px);
                     }
                 }
 
+                /* Küçük telefon (1 ürün) - isteğe bağlı */
                 @media (max-width: 480px) {
                     #ebebek-carousel .carousel-product-item {
                         flex: 0 0 100%;
