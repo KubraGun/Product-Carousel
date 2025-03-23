@@ -22,10 +22,8 @@
                 const section = document.querySelector('.Section1');
                 if (section) {
                     section.insertAdjacentHTML('afterend', html);
-                    console.log('✅ Carousel .Section1 altına başarıyla eklendi!');
                 } else {
-                    console.log('❌ .Section1 bulunamadı, tekrar denenecek...');
-                    setTimeout(tryInsertCarousel, 200); 
+                    setTimeout(tryInsertCarousel, 200);
                 }
             };
 
@@ -386,6 +384,98 @@
                     color: #fff;
                 }
 
+                                #ebebek-carousel .heart {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 40px; /* İkonun genişliği */
+                    height: 40px; /* İkonun yüksekliği */
+                    border-radius: 50%;
+                    background-color: #FFF;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                }
+
+                #ebebek-carousel .heart-icon {
+                    width: 24px; /* İkonun içindeki SVG'nin genişliği */
+                    height: 24px; /* İkonun içindeki SVG'nin yüksekliği */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart .default-icon,
+                #ebebek-carousel .heart .hover-icon,
+                #ebebek-carousel .heart .favorite-icon,
+                #ebebek-carousel .heart .favorite-hover-icon {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 24px; /* İkonun içindeki SVG'nin genişliği */
+                    height: 24px; /* İkonun içindeki SVG'nin yüksekliği */
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart:hover .default-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart:hover .hover-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart.is-favorite .default-icon,
+                #ebebek-carousel .heart.is-favorite .hover-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart.is-favorite .favorite-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart.is-favorite:hover .favorite-icon {
+                    opacity: 0;
+                }
+
+                #ebebek-carousel .heart.is-favorite:hover .favorite-hover-icon {
+                    opacity: 1;
+                }
+
+                #ebebek-carousel .heart-icon {
+                    width: 24px; /* İkonun içindeki SVG'nin genişliği */
+                    height: 24px; /* İkonun içindeki SVG'nin yüksekliği */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart .default-icon,
+                #ebebek-carousel .heart .hover-icon,
+                #ebebek-carousel .heart .favorite-icon,
+                #ebebek-carousel .heart .favorite-hover-icon {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 24px; /* İkonun içindeki SVG'nin genişliği */
+                    height: 24px; /* İkonun içindeki SVG'nin yüksekliği */
+                    transition: opacity 0.3s ease;
+                }
+
+                #ebebek-carousel .heart .hover-icon svg,
+                #ebebek-carousel .heart .favorite-icon svg,
+                #ebebek-carousel .heart .favorite-hover-icon svg {
+                    width: 100%; /* SVG'nin buton boyutuna uyumlu olması için */
+                    height: 100%;
+                }
+
                 @media (max-width: 768px) {
                     #ebebek-carousel .carousel-btn {
                         display: none;
@@ -625,7 +715,6 @@
 
     const init = () => {
         if (!self.checkPage()) return;
-
         self.loadJQuery(() => {
             self.buildHTML();
             self.buildCSS();
@@ -633,6 +722,5 @@
             self.fetchAndRenderProducts();
         });
     };
-
     init();
 })();
